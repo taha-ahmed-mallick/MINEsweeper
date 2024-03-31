@@ -7,7 +7,47 @@
 		<link rel="stylesheet" href="./style.css" />
 	</head>
 	<body>
-		<div class="start screen"></div>
+		<div class="start screen">
+			<div class="difficulty">
+				<h1>Difficulty</h1>
+				<div class="wrapper">
+					<div class="dropdown">
+						<div class="select">
+							<span class="selected">Medium</span>
+							<div class="caret closed"></div>
+						</div>
+						<ul class="menu closed">
+							<li id="0" class="closed">Hard</li>
+							<li id="1" class="active closed">Medium</li>
+							<li id="2" class="closed">Easy</li>
+							<li id="3" class="closed">Custom</li>
+						</ul>
+					</div>
+					<div class="detail">
+						<div class="mines">
+							<span class="heading">Mines: </span>
+							<input type="number" id="mine" value="35" />
+							<div class="error">
+								Mines can't be more than the total number of
+								blocks
+							</div>
+							<div class="advice">
+								Advice: Mines shall be less than 30% of the area
+							</div>
+						</div>
+						<div class="dimensions">
+							<span class="heading">Dimensions: </span>
+							<div>
+								<input type="number" id="length" value="10" />
+								<span>x</span>
+								<input type="number" id="width" value="21" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="start-btn">Start Game</div>
+		</div>
 		<div class="game screen"></div>
 		<div class="pause-over screen"></div>
 		<script src="./script/main.js"></script>
