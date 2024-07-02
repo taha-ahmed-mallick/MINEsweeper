@@ -53,17 +53,23 @@ ulElements.forEach((element) => {
 	});
 });
 
+let levelInfo = document.querySelector(".info .level");
+let mineInfo = document.querySelector(".mines-time .mines span");
+
 function difficultyChange(id) {
 	ulElements[difficulty].classList.remove("active");
 	difficulty = id;
 	ulElements[id].classList.add("active");
 	selectedText.innerText = levels[difficulty].name;
+	levelInfo.innerText = levels[difficulty].name;
+	mineInfo.innerText = levels[difficulty].mines;
 }
 
 function setCustom() {
 	levels[difficulty].mines = parseInt(inputs[0].value);
 	levels[difficulty].dimension[0] = parseInt(inputs[1].value);
 	levels[difficulty].dimension[1] = parseInt(inputs[2].value);
+	mineInfo.innerText = levels[difficulty].mines;
 }
 
 for (let i = 0; i < inputs.length; i++) {
@@ -76,6 +82,9 @@ for (let i = 0; i < inputs.length; i++) {
 		}
 	});
 	inputs[i].addEventListener("input", (eve) => {
+		inputs[i].value < 0
+			? (inputs[i].value = Math.abs(inputs[i].value))
+			: false;
 		eve.data == null ? difficultyChange(3) : false;
 		inputChange();
 	});
@@ -101,11 +110,15 @@ function inputChange() {
 }
 
 let strtBtn = document.getElementsByClassName("start-btn")[0];
-strtBtn.addEventListener("click", () => {
+let screens = document.getElementsByClassName("screen");
+
+strtBtn.addEventListener("mousedown", () => {
 	if (error.classList.contains("appear")) {
 		strtBtn.classList.add("err");
 		setTimeout(() => strtBtn.classList.remove("err"), 250);
 	} else {
-		// then game will begin
+		screens[0].style.opacity = 0;
+		setTimeout(() => screens[0].classList.remove("shown"), 250);
+		screens[1].classList.add("shown");
 	}
 });
