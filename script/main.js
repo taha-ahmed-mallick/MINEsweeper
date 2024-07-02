@@ -120,5 +120,6 @@ strtBtn.addEventListener("mousedown", () => {
 		screens[0].style.opacity = 0;
 		setTimeout(() => screens[0].classList.remove("shown"), 250);
 		screens[1].classList.add("shown");
+		write("OKOK Starting!");
 	}
 });

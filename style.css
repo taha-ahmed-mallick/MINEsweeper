@@ -279,4 +279,31 @@ input[type="number"]::-webkit-outer-spin-button {
 	width: 100vw;
 	height: calc(100% - 65px);
 	padding: 30px;
+	display: flex;
+	align-items: center;
+}
+
+.container div {
+	position: absolute;
+	font-size: 91px;
+	width: calc(100% - 60px);
+	text-align: center;
+}
+
+.container .cursor {
+	display: inline-block;
+	width: 20px;
+	height: 65px;
+	background-color: #eaeaea;
+	border: 2px solid #ffffff;
+	animation: 1s ease-out 0s infinite alternate cursor-blinking;
+}
+
+@keyframes cursor-blinking {
+	from {
+		background-color: #eaeaea;
+	}
+	to {
+		background-color: #00000000;
+	}
 }
