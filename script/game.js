@@ -15,25 +15,21 @@ window.addEventListener("load", () => {
 	write(introSentence.innerHTML);
 });
 
-let writingInst = 0;
+let writing;
 
 function write(text) {
-	let inst = ++writingInst;
-	console.log(inst);
+	if (writing) {
+		clearInterval(writing);
+	}
+
 	introSentence.innerHTML = "";
 	text = text.split("");
 	let index = 0;
-	let writing = setInterval(() => {
+
+	writing = setInterval(() => {
 		if (index < text.length) {
 			introSentence.innerHTML += text[index];
 			index++;
-			if (writingInst > 1 && inst == 1) {
-				clearInterval(writing);
-				introSentence.innerHTML = "";
-			}
-		} else {
-			clearInterval(writing);
-			writingInst--;
-		}
+		} else clearInterval(writing);
 	}, 90);
 }
