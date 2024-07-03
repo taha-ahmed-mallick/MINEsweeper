@@ -111,6 +111,7 @@ function inputChange() {
 
 let strtBtn = document.getElementsByClassName("start-btn")[0];
 let screens = document.getElementsByClassName("screen");
+let writingScreen = document.querySelector(".container>div");
 
 strtBtn.addEventListener("mousedown", () => {
 	if (error.classList.contains("appear")) {
@@ -120,6 +121,12 @@ strtBtn.addEventListener("mousedown", () => {
 		screens[0].style.opacity = 0;
 		setTimeout(() => screens[0].classList.remove("shown"), 250);
 		screens[1].classList.add("shown");
-		write("OKOK Starting!");
+		write("Now Starting!");
+		grid = new Grid(levels[difficulty].dimension, levels[difficulty].mines);
+		// grid = new Grid([10, 2], 20);
+		setTimeout(() => {
+			writingScreen.classList.add("opacity-0");
+			setTimeout(() => writingScreen.classList.add("hide"), 500);
+		}, 1400);
 	}
 });
