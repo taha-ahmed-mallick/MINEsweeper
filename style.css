@@ -41,13 +41,13 @@ body {
 }
 
 .game.screen {
-	background: #1a3544;
+	background: hsl(201, 45%, 18%);
 	color: #fff;
 }
 
 .start-btn {
 	padding: 20px;
-	background-color: #2196f3;
+	background-color: hsl(207, 90%, 54%);
 	color: #fff;
 	border-radius: 7px;
 	cursor: pointer;
@@ -113,7 +113,7 @@ h1 {
 }
 
 .select {
-	background: #1e2b35;
+	background: hsl(206, 28%, 16%);
 	color: #fff;
 	display: flex;
 	justify-content: space-between;
@@ -124,7 +124,7 @@ h1 {
 }
 
 .select:hover {
-	background: #23303b;
+	background: hsl(208, 26%, 18%);
 }
 
 .caret {
@@ -144,8 +144,8 @@ h1 {
 .menu {
 	list-style: none;
 	padding: 1em 0.5em;
-	background-color: #2b3741;
-	border: 1px solid #2196f3;
+	background-color: hsl(207, 20%, 21%);
+	border: 1px solid hsl(207, 90%, 54%);
 	border-radius: 0.5em;
 	box-shadow: 0 0.5em 1em #00000033;
 	color: #cacaca;
@@ -246,7 +246,7 @@ input[type="number"]::-webkit-outer-spin-button {
 	justify-content: space-around;
 	align-items: center;
 	padding: 20px 0px;
-	background-color: #1e2b35;
+	background-color: hsl(206, 28%, 16%);
 }
 
 .info .level {

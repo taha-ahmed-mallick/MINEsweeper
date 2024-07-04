@@ -20,6 +20,19 @@ let levels = [
 		dimension: [null, null],
 	},
 ];
+let colors = [
+	{
+		name: "red", 
+		light: "",
+		dark: ""
+	},
+	{
+		name: "blue"
+	},
+	{
+		name: "green"
+	}
+];
 
 let difficulty = 1;
 

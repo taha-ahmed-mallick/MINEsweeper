@@ -42,6 +42,7 @@ class Cell {
 		this.loc = loc;
 		this.minesUnder = minesUnder;
 		this.mines = mines;
+		this.checked = checked;
 	}
 
 	draw() {}
@@ -99,7 +100,7 @@ class Grid {
 					y,
 					[i, j],
 					false,
-					null,
+					0,
 					false
 				);
 				row.push(cell);
@@ -138,31 +139,36 @@ class Grid {
 	}
 
 	nearbyMines() {
-		for (let i = 0; i < this.dimension[1]; i++) {
-			for (let j = 0; j < this.dimension[0]; j++) {
-				// console.log(this.grid[i][j]);
-				let directions = [
-					[0, 1],
-					[0, -1],
-					[1, 0],
-					[-1, 0],
-					[1, 1],
-					[1, -1],
-					[-1, 1],
-					[-1, -1],
-				];
-				let mineCount = 0;
-				directions.forEach((direction) => {
-					try {
-						if (
-							this.grid[i + direction[0]][j + direction[1]]
-								.minesUnder
-						)
-							mineCount++;
-					} catch (e) {}
-				});
-				this.grid[i][j].mines = mineCount;
-			}
+		for (let i = 0; i < this.minesLoc.length; i++) {
+			let directions = [
+				[0, 1],
+				[0, -1],
+				[1, 0],
+				[-1, 0],
+				[1, 1],
+				[1, -1],
+				[-1, 1],
+				[-1, -1],
+			];
+			directions.forEach((direction) => {
+				try {
+					let current = [
+						this.minesLoc[i][0] + direction[0],
+						this.minesLoc[i][1] + direction[1],
+					];
+					let mineCount = 0;
+					directions.forEach((direction) => {
+						try {
+							this.grid[current[0] + direction[0]][
+								current[1] + direction[1]
+							].minesUnder
+								? mineCount++
+								: null;
+						} catch (e) {}
+					});
+					this.grid[current[0]][current[1]].mines = mineCount;
+				} catch (e) {}
+			});
 		}
 	}
 }
