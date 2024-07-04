@@ -22,16 +22,21 @@ let levels = [
 ];
 let colors = [
 	{
-		name: "red", 
-		light: "",
-		dark: ""
+		name: "red",
+		hue: 4,
 	},
 	{
-		name: "blue"
+		name: "blue",
+		hue: 207,
 	},
 	{
-		name: "green"
-	}
+		name: "green",
+		hue: 88,
+	},
+	{
+		name: "yellow",
+		hue: 45,
+	},
 ];
 
 let difficulty = 1;
@@ -135,7 +140,12 @@ strtBtn.addEventListener("mousedown", () => {
 		setTimeout(() => screens[0].classList.remove("shown"), 250);
 		screens[1].classList.add("shown");
 		write("Now Starting!");
-		grid = new Grid(levels[difficulty].dimension, levels[difficulty].mines);
+		grid = new Grid(
+			levels[difficulty].dimension,
+			levels[difficulty].mines,
+			54
+		);
+		drawFrames();
 		// grid = new Grid([10, 2], 20);
 		setTimeout(() => {
 			writingScreen.classList.add("opacity-0");
