@@ -68,11 +68,38 @@ class Cell {
 			? (this.groundFill = "#e5c29f")
 			: (this.groundFill = "#d7b899");
 	}
+	textConfig() {
+		let colors = [
+			"#004d40",
+			"#558b2f",
+			"#fdd835",
+			"#ff9800",
+			"#1976d2",
+			"#673ab7",
+			"#e91e63",
+			"#37474f",
+		];
+		ctx.font = `900 ${this.length / 2}px Roboto`;
+		this.color = colors[this.mines];
+		console.log(this.mines, this.color);
+		let measure = ctx.measureText(this.mines.toString());
+		this.textWidth = measure.width;
+		this.textHeight =
+			measure.actualBoundingBoxAscent + measure.actualBoundingBoxDescent;
+	}
 	// ground: #d7b899 -> dark, #e5c29f -> light
 	draw() {
 		if (this.checked) {
 			ctx.fillStyle = this.groundFill;
 			ctx.fillRect(this.x, this.y, this.length, this.length);
+			ctx.fillStyle = this.color;
+			if (this.mines != 0) {
+				ctx.fillText(
+					this.mines,
+					this.x + this.length / 2 - this.textWidth / 2,
+					this.y + this.length - this.textHeight
+				);
+			}
 		} else {
 			ctx.fillStyle = this.fillStyle;
 			ctx.fillRect(this.x, this.y, this.length, this.length);
@@ -134,7 +161,7 @@ class Grid {
 					[i, j],
 					false,
 					0,
-					false,
+					true,
 					this.hue
 				);
 				row.push(cell);
@@ -202,6 +229,7 @@ class Grid {
 							} catch (e) {}
 						});
 						this.grid[current[0]][current[1]].mines = mineCount;
+						this.grid[current[0]][current[1]].textConfig();
 					}
 				} catch (e) {}
 			});

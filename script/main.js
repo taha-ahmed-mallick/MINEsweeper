@@ -35,7 +35,7 @@ let colors = [
 	},
 	{
 		name: "yellow",
-		hue: 45,
+		hue: 54,
 	},
 ];
 
@@ -143,7 +143,7 @@ strtBtn.addEventListener("mousedown", () => {
 		grid = new Grid(
 			levels[difficulty].dimension,
 			levels[difficulty].mines,
-			54
+			207
 		);
 		drawFrames();
 		// grid = new Grid([10, 2], 20);
