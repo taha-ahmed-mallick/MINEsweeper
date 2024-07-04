@@ -70,8 +70,8 @@ class Cell {
 	}
 	textConfig() {
 		let colors = [
-			"#004d40",
 			"#558b2f",
+			"#004d40",
 			"#fdd835",
 			"#ff9800",
 			"#1976d2",
@@ -80,7 +80,7 @@ class Cell {
 			"#37474f",
 		];
 		ctx.font = `900 ${this.length / 2}px Roboto`;
-		this.color = colors[this.mines];
+		this.color = colors[this.mines - 1];
 		console.log(this.mines, this.color);
 		let measure = ctx.measureText(this.mines.toString());
 		this.textWidth = measure.width;
@@ -161,7 +161,7 @@ class Grid {
 					[i, j],
 					false,
 					0,
-					true,
+					false,
 					this.hue
 				);
 				row.push(cell);
