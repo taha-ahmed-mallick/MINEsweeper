@@ -64,6 +64,7 @@ class Cell {
 		this.fillStyle = `hsl(${this.hue}, ${this.theme[this.choose].sat}%, ${
 			this.theme[this.choose].light
 		}%)`;
+		// ground: #d7b899 -> dark, #e5c29f -> light
 		this.choose
 			? (this.groundFill = "#e5c29f")
 			: (this.groundFill = "#d7b899");
@@ -87,7 +88,6 @@ class Cell {
 		this.textHeight =
 			measure.actualBoundingBoxAscent + measure.actualBoundingBoxDescent;
 	}
-	// ground: #d7b899 -> dark, #e5c29f -> light
 	draw() {
 		if (this.checked) {
 			ctx.fillStyle = this.groundFill;
@@ -118,27 +118,26 @@ class Grid {
 
 	init() {
 		this.length = [canvas.width, canvas.height];
-		this.divs =
-			this.dimension[0] > this.dimension[1]
-				? this.dimension[0]
-				: this.dimension[1];
-		if (this.length[0] > this.length[1]) {
-			this.cellLength = this.length[0] / this.divs;
+		if (
+			this.length[0] > this.length[1] &&
 			this.dimension[0] < this.dimension[1]
-				? ([this.dimension[0], this.dimension[1]] = [
-						this.dimension[1],
-						this.dimension[0],
-				  ])
-				: null;
-		} else {
-			this.cellLength = this.length[1] / this.divs;
+		) {
+			[this.dimension[0], this.dimension[1]] = [
+				this.dimension[1],
+				this.dimension[0],
+			];
+		} else if (
+			this.length[0] < this.length[1] &&
 			this.dimension[0] > this.dimension[1]
-				? ([this.dimension[0], this.dimension[1]] = [
-						this.dimension[1],
-						this.dimension[0],
-				  ])
-				: null;
+		) {
+			[this.dimension[0], this.dimension[1]] = [
+				this.dimension[1],
+				this.dimension[0],
+			];
 		}
+		let Wwise = this.length[0] / this.dimension[0];
+		let Hwise = this.length[1] / this.dimension[1];
+		this.cellLength = Wwise > Hwise ? Hwise : Wwise;
 		this.gridLength = [
 			this.dimension[0] * this.cellLength,
 			this.dimension[1] * this.cellLength,
