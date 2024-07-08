@@ -7,6 +7,15 @@ let grid, animation;
 function resize() {
 	canvas.width = window.innerWidth - 60;
 	canvas.height = window.innerHeight - 125;
+	if (grid) {
+		grid.init();
+		grid.cellUpdate();
+		for (let i = 0; i < grid.grid.length; i++) {
+			for (let j = 0; j < grid.grid[0].length; j++) {
+				grid.grid[i][j].textMeasurement();
+			}
+		}
+	}
 }
 
 window.addEventListener("resize", resize);
@@ -80,9 +89,12 @@ class Cell {
 			"#e91e63",
 			"#37474f",
 		];
-		ctx.font = `900 ${this.length / 2}px Roboto`;
 		this.color = colors[this.mines - 1];
 		console.log(this.mines, this.color);
+		this.textMeasurement();
+	}
+	textMeasurement() {
+		ctx.font = `900 ${this.length / 2}px Roboto`;
 		let measure = ctx.measureText(this.mines.toString());
 		this.textWidth = measure.width;
 		this.textHeight =
@@ -113,7 +125,14 @@ class Grid {
 		this.grid = [];
 		this.mines = mines;
 		this.hue = hue;
+		this.setUp();
+	}
+
+	setUp() {
 		this.init();
+		this.gridSetup();
+		this.placeMines();
+		this.nearbyMines();
 	}
 
 	init() {
@@ -135,8 +154,8 @@ class Grid {
 				this.dimension[0],
 			];
 		}
-		let Wwise = this.length[0] / this.dimension[0];
-		let Hwise = this.length[1] / this.dimension[1];
+		let Wwise = Math.floor(this.length[0] / this.dimension[0]);
+		let Hwise = Math.floor(this.length[1] / this.dimension[1]);
 		this.cellLength = Wwise > Hwise ? Hwise : Wwise;
 		this.gridLength = [
 			this.dimension[0] * this.cellLength,
@@ -144,7 +163,30 @@ class Grid {
 		];
 		this.offX = (this.length[0] - this.gridLength[0]) / 2;
 		this.offY = (this.length[1] - this.gridLength[1]) / 2;
-		this.gridSetup();
+	}
+
+	cellUpdate() {
+		if (this.dimension[1] != this.grid.length) {
+			let temp = [];
+			for (let i = 0; i < this.dimension[1]; i++) {
+				let row = [];
+				for (let j = 0; j < this.dimension[0]; j++) {
+					this.grid[j][i].loc = [i, j];
+					row.push(this.grid[j][i]);
+				}
+				temp.push(row);
+			}
+			this.grid = temp;
+		}
+		for (let i = 0; i < this.dimension[1]; i++) {
+			for (let j = 0; j < this.dimension[0]; j++) {
+				this.grid[i][j].length = this.cellLength;
+				let y = this.cellLength * i + this.offY;
+				let x = this.cellLength * j + this.offX;
+				this.grid[i][j].x = x;
+				this.grid[i][j].y = y;
+			}
+		}
 	}
 
 	gridSetup() {
@@ -167,7 +209,6 @@ class Grid {
 			}
 			this.grid.push(row);
 		}
-		this.placeMines();
 	}
 
 	placeMines() {
@@ -195,7 +236,6 @@ class Grid {
 				}
 			}
 		}
-		this.nearbyMines();
 	}
 
 	nearbyMines() {
@@ -271,7 +311,7 @@ function test() {
 }
 let abort = false;
 function drawFrames() {
-	console.log("drawing");
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	for (let i = 0; i < grid.grid.length; i++) {
 		for (let j = 0; j < grid.grid[0].length; j++) {
 			grid.grid[i][j].draw();
