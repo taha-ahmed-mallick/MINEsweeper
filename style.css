@@ -308,6 +308,7 @@ div.hide {
 	height: 65px;
 	background-color: #eaeaea;
 	border: 2px solid #ffffff;
+	margin: 0 25px;
 	animation: 0.6s ease-out 0s infinite alternate cursor-blinking;
 }
 
