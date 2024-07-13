@@ -20,24 +20,6 @@ let levels = [
 		dimension: [null, null],
 	},
 ];
-let colors = [
-	{
-		name: "red",
-		hue: 4,
-	},
-	{
-		name: "blue",
-		hue: 207,
-	},
-	{
-		name: "green",
-		hue: 88,
-	},
-	{
-		name: "yellow",
-		hue: 54,
-	},
-];
 
 let difficulty = 1;
 
@@ -146,7 +128,6 @@ strtBtn.addEventListener("mousedown", () => {
 			207
 		);
 		drawFrames();
-		// grid = new Grid([10, 2], 20);
 		setTimeout(() => {
 			writingScreen.classList.add("opacity-0");
 			setTimeout(() => writingScreen.classList.add("hide"), 500);

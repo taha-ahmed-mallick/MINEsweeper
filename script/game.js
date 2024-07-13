@@ -43,6 +43,11 @@ function write(text) {
 	}, 90);
 }
 
+let mineImg = new Image();
+mineImg.src = "../images/mine.png";
+let mineActive = new Image();
+mineActive.src = "../images/mine-active.png";
+
 class Cell {
 	constructor(length, x, y, loc, minesUnder, mines, checked, hue) {
 		this.length = length;
@@ -92,7 +97,6 @@ class Cell {
 			"#37474f",
 		];
 		this.color = colors[this.mines - 1];
-		console.log(this.mines, this.color);
 		this.textMeasurement();
 	}
 
@@ -114,6 +118,15 @@ class Cell {
 					this.mines,
 					this.x + this.length / 2 - this.textWidth / 2,
 					this.y + this.length - this.textHeight
+				);
+			}
+			if (this.minesUnder) {
+				ctx.drawImage(
+					mineImg,
+					this.x,
+					this.y,
+					this.length,
+					this.length
 				);
 			}
 		} else {
@@ -222,39 +235,46 @@ class Grid {
 			[-1, 1],
 			[-1, -1],
 		];
-		directions.forEach((direction) => {
-			let prob = Math.random();
-			let currentLoc = [loc[0] + direction[0], loc[1] + direction[1]];
-			if (prob > 0.35) {
+
+		openMore(this.grid, loc, 0);
+
+		function openMore(grid, loc, counter, direction) {
+			counter++;
+			if (direction) {
+				let prob = Math.random();
+				let currentLoc = [loc[0] + direction[0], loc[1] + direction[1]];
 				try {
-					if (!this.grid[currentLoc[0]][currentLoc[1]].checked) {
+					if (!grid[currentLoc[0]][currentLoc[1]].checked) {
 						opened.push(currentLoc);
 					}
-					this.grid[currentLoc[0]][currentLoc[1]].checked = true;
+					grid[currentLoc[0]][currentLoc[1]].checked = true;
 				} catch (e) {}
-			}
-			if (prob > 0.6) {
-				directions.forEach((direction) => {
-					try {
-						if (
-							!this.grid[currentLoc[0] + direction[0]][
-								currentLoc[1] + direction[1]
-							].checked
-						) {
-							opened.push([
-								currentLoc[0] + direction[0],
-								currentLoc[1] + direction[1],
-							]);
-						}
-						this.grid[currentLoc[0] + direction[0]][
-							currentLoc[1] + direction[1]
-						].checked = true;
-					} catch (e) {}
-				});
-			}
-		});
+				if (prob > 0.5) {
+					openMore(grid, currentLoc, counter, direction);
+				}
+				if (prob > 0.4) {
+					iAmRunningOUTofNames(grid, currentLoc, counter);
+				}
+			} else iAmRunningOUTofNames(grid, loc, counter);
+		}
+
+		function iAmRunningOUTofNames(grid, loc, counter) {
+			directions.forEach((direction) => {
+				let prob = Math.random();
+				let currentLoc = [loc[0] + direction[0], loc[1] + direction[1]];
+				try {
+					if (!grid[currentLoc[0]][currentLoc[1]].checked) {
+						opened.push(currentLoc);
+					}
+					grid[currentLoc[0]][currentLoc[1]].checked = true;
+				} catch (e) {}
+				if (prob > 0.8 && counter < 5)
+					openMore(grid, currentLoc, counter, direction);
+			});
+		}
 
 		this.goldenBlocks = [];
+		this.border = [];
 		for (let i = 0; i < opened.length; i++) {
 			directions.forEach((direction) => {
 				let loc = [
@@ -272,19 +292,41 @@ class Grid {
 				}
 
 				try {
-					!this.grid[loc[0]][loc[1]].checked && !alreadyExists
-						? this.goldenBlocks.push(loc)
-						: null;
+					if (!this.grid[loc[0]][loc[1]].checked) {
+						this.border.push(opened[i]);
+						if (!alreadyExists) this.goldenBlocks.push(loc);
+					}
 				} catch (e) {}
 			});
 		}
+
+		function removeDuplicates(arr) {
+			let newArr = [];
+			for (let i = 0; i < arr.length; i++) {
+				let alreadyExists = false;
+				for (let j = 0; j < newArr.length; j++) {
+					if (
+						arr[i][0] == newArr[j][0] &&
+						arr[i][1] == newArr[j][1]
+					) {
+						alreadyExists = true;
+						break;
+					}
+				}
+				if (!alreadyExists) newArr.push(arr[i]);
+			}
+			return newArr;
+		}
+		this.border = removeDuplicates(this.border);
 		this.placeMines();
 	}
 
 	placeMines() {
 		this.minesLoc = [];
-		let selectedGoldenBlocks = Math.round(this.goldenBlocks.length * 0.8);
+		let selectedGoldenBlocks = Math.round(this.goldenBlocks.length * 0.5);
 		let selectedIndicies = [];
+		if (selectedGoldenBlocks > this.mines)
+			selectedGoldenBlocks = this.mines;
 		for (let i = 0; i < selectedGoldenBlocks; i++) {
 			let index,
 				alreadyExists = true;
@@ -318,9 +360,6 @@ class Grid {
 			return [x, y];
 		}
 		function check(minesLoc, testMine, dimension, grid) {
-			console.log(testMine);
-			console.log(grid[testMine[0]][testMine[1]].checked);
-			console.log(mineLoc);
 			if (grid[testMine[0]][testMine[1]].checked) {
 				mineLoc = locCalc(dimension);
 				check(minesLoc, mineLoc, dimension, grid);
@@ -340,17 +379,17 @@ class Grid {
 	}
 
 	nearbyMines() {
+		let directions = [
+			[0, 1],
+			[0, -1],
+			[1, 0],
+			[-1, 0],
+			[1, 1],
+			[1, -1],
+			[-1, 1],
+			[-1, -1],
+		];
 		for (let i = 0; i < this.minesLoc.length; i++) {
-			let directions = [
-				[0, 1],
-				[0, -1],
-				[1, 0],
-				[-1, 0],
-				[1, 1],
-				[1, -1],
-				[-1, 1],
-				[-1, -1],
-			];
 			directions.forEach((direction) => {
 				try {
 					let current = [
@@ -374,6 +413,37 @@ class Grid {
 				} catch (e) {}
 			});
 		}
+		let moreBlock = [];
+		for (let i = 0; i < this.border.length; i++) {
+			if (this.grid[this.border[i][0]][this.border[i][1]].mines == 0) {
+				directions.forEach((direction) => {
+					let loc = [
+						this.border[i][0] + direction[0],
+						this.border[i][1] + direction[1],
+					];
+					try {
+						if (!this.grid[loc[0]][loc[1]].checked) {
+							this.grid[loc[0]][loc[1]].checked = true;
+							if (this.grid[loc[0]][loc[1]].mines == 0)
+								recursive(this.grid, loc);
+						}
+					} catch (e) {}
+				});
+			}
+		}
+
+		function recursive(grid, loc) {
+			console.log("doing");
+			directions.forEach((direction) => {
+				let current = [loc[0] + direction[0], loc[1] + direction[1]];
+				try {
+					grid[current[0]][current[1]].checked = true;
+					if (grid[current[0]][current[1]].mines == 0)
+						recursive(grid, current);
+				} catch (e) {}
+			});
+		}
+		console.log(moreBlock);
 	}
 }
 
