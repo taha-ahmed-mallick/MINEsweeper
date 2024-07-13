@@ -433,13 +433,15 @@ class Grid {
 		}
 
 		function recursive(grid, loc) {
-			console.log("doing");
+			console.log(loc);
 			directions.forEach((direction) => {
 				let current = [loc[0] + direction[0], loc[1] + direction[1]];
 				try {
-					grid[current[0]][current[1]].checked = true;
-					if (grid[current[0]][current[1]].mines == 0)
-						recursive(grid, current);
+					if (!grid[current[0]][current[1]].checked) {
+						grid[current[0]][current[1]].checked = true;
+						if (grid[current[0]][current[1]].mines == 0)
+							recursive(grid, current);
+					}
 				} catch (e) {}
 			});
 		}
