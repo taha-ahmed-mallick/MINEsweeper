@@ -24,8 +24,8 @@ function resize() {
 window.addEventListener("resize", resize);
 window.addEventListener("load", () => {
 	resize();
-	mineImg.src = "../images/mine.png";
-	mineActive.src = "../images/mine-active.png";
+	mineImg.src = "./images/mine.png";
+	mineActive.src = "./images/mine-active.png";
 	write(introSentence.innerHTML);
 });
 
