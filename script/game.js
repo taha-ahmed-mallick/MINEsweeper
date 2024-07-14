@@ -4,6 +4,9 @@ let ctx = canvas.getContext("2d");
 let introSentence = document.getElementsByClassName("sentence")[0];
 let grid, animation;
 
+let mineImg = new Image();
+let mineActive = new Image();
+
 function resize() {
 	canvas.width = window.innerWidth - 60;
 	canvas.height = window.innerHeight - 125;
@@ -21,6 +24,8 @@ function resize() {
 window.addEventListener("resize", resize);
 window.addEventListener("load", () => {
 	resize();
+	mineImg.src = "../images/mine.png";
+	mineActive.src = "../images/mine-active.png";
 	write(introSentence.innerHTML);
 });
 
@@ -42,11 +47,6 @@ function write(text) {
 		} else clearInterval(writing);
 	}, 90);
 }
-
-let mineImg = new Image();
-mineImg.src = "../images/mine.png";
-let mineActive = new Image();
-mineActive.src = "../images/mine-active.png";
 
 class Cell {
 	constructor(length, x, y, loc, minesUnder, mines, checked, hue) {
@@ -413,7 +413,7 @@ class Grid {
 				} catch (e) {}
 			});
 		}
-		let moreBlock = [];
+
 		for (let i = 0; i < this.border.length; i++) {
 			if (this.grid[this.border[i][0]][this.border[i][1]].mines == 0) {
 				directions.forEach((direction) => {
@@ -425,27 +425,25 @@ class Grid {
 						if (!this.grid[loc[0]][loc[1]].checked) {
 							this.grid[loc[0]][loc[1]].checked = true;
 							if (this.grid[loc[0]][loc[1]].mines == 0)
-								recursive(this.grid, loc);
+								removeRemaining(this.grid, loc);
 						}
 					} catch (e) {}
 				});
 			}
 		}
 
-		function recursive(grid, loc) {
-			console.log(loc);
+		function removeRemaining(grid, loc) {
 			directions.forEach((direction) => {
 				let current = [loc[0] + direction[0], loc[1] + direction[1]];
 				try {
 					if (!grid[current[0]][current[1]].checked) {
 						grid[current[0]][current[1]].checked = true;
 						if (grid[current[0]][current[1]].mines == 0)
-							recursive(grid, current);
+							removeRemaining(grid, current);
 					}
 				} catch (e) {}
 			});
 		}
-		console.log(moreBlock);
 	}
 }
 
