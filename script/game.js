@@ -6,6 +6,7 @@ let grid, animation;
 
 let mineImg = new Image();
 let mineActive = new Image();
+let flag = new Image();
 
 function resize() {
 	canvas.width = window.innerWidth - 60;
@@ -26,6 +27,7 @@ window.addEventListener("load", () => {
 	resize();
 	mineImg.src = "./images/mine.png";
 	mineActive.src = "./images/mine-active.png";
+	flag.src = "./images/flag.svg";
 	write(introSentence.innerHTML);
 });
 
@@ -49,15 +51,17 @@ function write(text) {
 }
 
 class Cell {
-	constructor(length, x, y, loc, minesUnder, mines, checked, hue) {
+	constructor(length, x, y, loc, hue) {
 		this.length = length;
 		this.x = x;
 		this.y = y;
 		this.loc = loc;
-		this.minesUnder = minesUnder;
-		this.mines = mines;
-		this.checked = checked;
+		this.minesUnder = false;
+		this.mines = 0;
+		this.checked = false;
 		this.hue = hue;
+		this.flagged = false;
+		this.animation = false;
 		this.setUp();
 	}
 
@@ -76,9 +80,9 @@ class Cell {
 		];
 		this.choose =
 			(this.evenX && !this.evenY) || (!this.evenX && this.evenY) ? 1 : 0; // 0 -> dark, 1 -> light
-		this.fillStyle = `hsl(${this.hue}, ${this.theme[this.choose].sat}%, ${
+		this.fillStyle = `hsl(${this.hue} ${this.theme[this.choose].sat}% ${
 			this.theme[this.choose].light
-		}%)`;
+		}%`;
 		// ground: #d7b899 -> dark, #e5c29f -> light
 		this.choose
 			? (this.groundFill = "#e5c29f")
@@ -132,9 +136,42 @@ class Cell {
 		} else {
 			ctx.fillStyle = this.fillStyle;
 			ctx.fillRect(this.x, this.y, this.length, this.length);
+			if (this.flagged) {
+				ctx.drawImage(flag, this.x, this.y, this.length, this.length);
+			}
 		}
 	}
+
+	open() {
+		this.checked = true;
+		this.opacity = 100;
+		this.animation = true;
+	}
+
+	openAnimation() {
+		this.opacity -= 5;
+		if (this.opacity > 0) {
+			ctx.fillStyle = this.fillStyle + " / " + this.opacity + "%)";
+			console.log(ctx.fillStyle);
+			ctx.translate(this.x, this.y);
+			ctx.rotate(Math.PI / 4);
+			ctx.fillRect(0, 0, this.length, this.length);
+			ctx.rotate(-Math.PI / 4);
+			ctx.translate(-this.x, -this.y);
+		} else this.animation = false;
+	}
 }
+
+let directions = [
+	[0, 1],
+	[0, -1],
+	[1, 0],
+	[-1, 0],
+	[1, 1],
+	[1, -1],
+	[-1, 1],
+	[-1, -1],
+];
 
 class Grid {
 	constructor(dimension, mines, hue) {
@@ -207,16 +244,7 @@ class Grid {
 			for (let j = 0; j < this.dimension[0]; j++) {
 				let y = this.cellLength * i + this.offY;
 				let x = this.cellLength * j + this.offX;
-				let cell = new Cell(
-					this.cellLength,
-					x,
-					y,
-					[i, j],
-					false,
-					0,
-					false,
-					this.hue
-				);
+				let cell = new Cell(this.cellLength, x, y, [i, j], this.hue);
 				row.push(cell);
 			}
 			this.grid.push(row);
@@ -225,16 +253,6 @@ class Grid {
 
 	firstClick(loc) {
 		let opened = [];
-		let directions = [
-			[0, 1],
-			[0, -1],
-			[1, 0],
-			[-1, 0],
-			[1, 1],
-			[1, -1],
-			[-1, 1],
-			[-1, -1],
-		];
 
 		openMore(this.grid, loc, 0);
 
@@ -247,7 +265,7 @@ class Grid {
 					if (!grid[currentLoc[0]][currentLoc[1]].checked) {
 						opened.push(currentLoc);
 					}
-					grid[currentLoc[0]][currentLoc[1]].checked = true;
+					grid[currentLoc[0]][currentLoc[1]].open();
 				} catch (e) {}
 				if (prob > 0.5) {
 					openMore(grid, currentLoc, counter, direction);
@@ -266,7 +284,7 @@ class Grid {
 					if (!grid[currentLoc[0]][currentLoc[1]].checked) {
 						opened.push(currentLoc);
 					}
-					grid[currentLoc[0]][currentLoc[1]].checked = true;
+					grid[currentLoc[0]][currentLoc[1]].open();
 				} catch (e) {}
 				if (prob > 0.8 && counter < 5)
 					openMore(grid, currentLoc, counter, direction);
@@ -379,16 +397,6 @@ class Grid {
 	}
 
 	nearbyMines() {
-		let directions = [
-			[0, 1],
-			[0, -1],
-			[1, 0],
-			[-1, 0],
-			[1, 1],
-			[1, -1],
-			[-1, 1],
-			[-1, -1],
-		];
 		for (let i = 0; i < this.minesLoc.length; i++) {
 			directions.forEach((direction) => {
 				try {
@@ -423,7 +431,7 @@ class Grid {
 					];
 					try {
 						if (!this.grid[loc[0]][loc[1]].checked) {
-							this.grid[loc[0]][loc[1]].checked = true;
+							this.grid[loc[0]][loc[1]].open();
 							if (this.grid[loc[0]][loc[1]].mines == 0)
 								removeRemaining(this.grid, loc);
 						}
@@ -437,7 +445,7 @@ class Grid {
 				let current = [loc[0] + direction[0], loc[1] + direction[1]];
 				try {
 					if (!grid[current[0]][current[1]].checked) {
-						grid[current[0]][current[1]].checked = true;
+						grid[current[0]][current[1]].open();
 						if (grid[current[0]][current[1]].mines == 0)
 							removeRemaining(grid, current);
 					}
@@ -448,25 +456,84 @@ class Grid {
 }
 
 canvas.addEventListener("click", (eve) => {
-	let x = eve.offsetX - grid.offX;
-	let y = eve.offsetY - grid.offY;
+	let [xLoc, yLoc] = findLoc(eve);
 
-	let xLoc = Math.floor(x / grid.cellLength);
-	let yLoc = Math.floor(y / grid.cellLength);
+	if (typeof xLoc == "number") {
+		if (grid.grid[yLoc][xLoc].flagged) {
+			grid.grid[yLoc][xLoc].flagged = false;
+			mineInfo.innerHTML++;
+		} else {
+			if (
+				!grid.grid[yLoc][xLoc].minesUnder &&
+				grid.grid[yLoc][xLoc].mines == 0 &&
+				!grid.grid[yLoc][xLoc].checked &&
+				!grid.allClosed
+			) {
+				console.log("passed");
+				removeZeroBlock([yLoc, xLoc]);
+			}
+			grid.grid[yLoc][xLoc].open();
+		}
 
-	if (
-		xLoc >= 0 &&
-		xLoc < grid.dimension[0] &&
-		yLoc >= 0 &&
-		yLoc < grid.dimension[1]
-	) {
-		grid.grid[yLoc][xLoc].checked = true;
 		if (grid.allClosed) {
 			grid.allClosed = false;
 			grid.firstClick([yLoc, xLoc]);
 		}
 	}
 });
+
+function removeZeroBlock(loc) {
+	let more = [];
+	directions.forEach((direction) => {
+		let current = [loc[0] + direction[0], loc[1] + direction[1]];
+		try {
+			if (!grid.grid[current[0]][current[1]].checked) {
+				grid.grid[current[0]][current[1]].open();
+				if (grid.grid[current[0]][current[1]].mines == 0)
+					more.push(current);
+			}
+		} catch (e) {}
+	});
+	for (let i = 0; i < more.length; i++) removeZeroBlock(more[i]);
+}
+
+canvas.addEventListener("contextmenu", (eve) => {
+	eve.preventDefault();
+	if (eve.pointerType == "mouse") {
+		let [xLoc, yLoc] = findLoc(eve);
+		if (
+			typeof xLoc == "number" &&
+			!grid.allClosed &&
+			mineInfo.innerHTML > 0
+		) {
+			if (!grid.grid[yLoc][xLoc].checked) {
+				if (!grid.grid[yLoc][xLoc].flagged) {
+					grid.grid[yLoc][xLoc].flagged = true;
+					mineInfo.innerHTML--;
+				} else {
+					grid.grid[yLoc][xLoc].flagged = false;
+					mineInfo.innerHTML++;
+				}
+			}
+		}
+	}
+});
+
+function findLoc(eve) {
+	let x = eve.offsetX - grid.offX;
+	let y = eve.offsetY - grid.offY;
+
+	let xLoc = Math.floor(x / grid.cellLength);
+	let yLoc = Math.floor(y / grid.cellLength);
+	if (
+		xLoc >= 0 &&
+		xLoc < grid.dimension[0] &&
+		yLoc >= 0 &&
+		yLoc < grid.dimension[1]
+	) {
+		return [xLoc, yLoc];
+	} else return [false, false];
+}
 
 function test() {
 	let table = [];
@@ -488,6 +555,9 @@ function drawFrames() {
 	for (let i = 0; i < grid.grid.length; i++) {
 		for (let j = 0; j < grid.grid[0].length; j++) {
 			grid.grid[i][j].draw();
+			if (grid.grid[i][j].animation) {
+				grid.grid[i][j].openAnimation();
+			}
 		}
 	}
 	animation = requestAnimationFrame(drawFrames);
