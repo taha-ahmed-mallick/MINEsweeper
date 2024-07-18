@@ -143,9 +143,18 @@ class Cell {
 	}
 
 	open() {
-		this.checked = true;
-		this.opacity = 100;
-		this.animation = true;
+		if (!this.checked) {
+			this.checked = true;
+			this.opacity = 100;
+			this.animation = true;
+			this.animParameter = {
+				vel: {
+					direc: Math.random() * 2 * Math.PI,
+					mag: Math.random() * 25,
+				},
+				pos: { rx: 0, ry: 0 },
+			};
+		}
 	}
 
 	openAnimation() {
@@ -153,11 +162,14 @@ class Cell {
 		if (this.opacity > 0) {
 			ctx.fillStyle = this.fillStyle + " / " + this.opacity + "%)";
 			console.log(ctx.fillStyle);
-			ctx.translate(this.x, this.y);
-			ctx.rotate(Math.PI / 4);
-			ctx.fillRect(0, 0, this.length, this.length);
-			ctx.rotate(-Math.PI / 4);
-			ctx.translate(-this.x, -this.y);
+			ctx.translate(this.x + this.length / 2, this.y + this.length / 2);
+			ctx.fillRect(
+				-this.length / 2,
+				-this.length / 2,
+				this.length,
+				this.length
+			);
+			ctx.translate(-this.x - this.length / 2, -this.y - this.length / 2);
 		} else this.animation = false;
 	}
 }
@@ -469,7 +481,6 @@ canvas.addEventListener("click", (eve) => {
 				!grid.grid[yLoc][xLoc].checked &&
 				!grid.allClosed
 			) {
-				console.log("passed");
 				removeZeroBlock([yLoc, xLoc]);
 			}
 			grid.grid[yLoc][xLoc].open();
@@ -552,6 +563,7 @@ function test() {
 let abort = false;
 function drawFrames() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.fillRect(50, 50, 10, 50);
 	for (let i = 0; i < grid.grid.length; i++) {
 		for (let j = 0; j < grid.grid[0].length; j++) {
 			grid.grid[i][j].draw();
