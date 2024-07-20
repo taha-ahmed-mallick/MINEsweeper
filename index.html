@@ -8,10 +8,7 @@
 		<link rel="shortcut icon" href="#" type="image/x-icon" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap"
-			rel="stylesheet"
-		/>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet" />
 	</head>
 	<body>
 		<div class="start screen shown">
@@ -34,14 +31,8 @@
 						<div class="mines">
 							<span class="heading">Mines: </span>
 							<input type="number" id="mine" value="35" />
-							<div class="error">
-								❌Mines can't be more than the total number of
-								blocks
-							</div>
-							<div class="advice">
-								⚠ Advice: Mines shall be less than 30% of the
-								area
-							</div>
+							<div class="error">❌Mines can't be more than the total number of blocks</div>
+							<div class="advice">⚠ Advice: Mines shall be less than 30% of the area</div>
 						</div>
 						<div class="dimensions">
 							<span class="heading">Dimensions: </span>
@@ -75,8 +66,10 @@
 			</div>
 			<div class="container">
 				<div>
-					<span class="sentence">Waiting for YOU to start</span>
-					<span class="cursor"></span>
+					<span class="sentence">
+						<span class="content">Waiting for YOU to start</span>
+						<span class="cursor"></span>
+					</span>
 				</div>
 				<canvas id="canvas"></canvas>
 			</div>
