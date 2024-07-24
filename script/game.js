@@ -2,7 +2,8 @@
 let canvas = document.getElementsByTagName("canvas")[0];
 let ctx = canvas.getContext("2d");
 let introSentence = document.getElementsByClassName("content")[0];
-let grid, animation;
+let timeHTML = document.querySelector(".time > span");
+let grid, animation, stopWatch;
 
 let mineImg = new Image();
 let mineActive = new Image();
@@ -227,6 +228,7 @@ class Grid {
 	}
 
 	firstClick(loc) {
+		stopWatch = setInterval(() => timeHTML.innerHTML++, 1000);
 		let opened = [];
 
 		openMore(this.grid, loc, 0);
@@ -414,6 +416,7 @@ canvas.addEventListener("click", (eve) => {
 				removeZeroBlock([yLoc, xLoc]);
 			}
 			grid.grid[yLoc][xLoc].open();
+			if (grid.grid[yLoc][xLoc].minesUnder) canvas.style.filter = "grayscale(1)";
 		}
 
 		if (grid.allClosed) {

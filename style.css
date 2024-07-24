@@ -22,7 +22,7 @@ body {
 }
 
 .start,
-.pause-over {
+.pause-screen {
 	background: #00000080;
 	display: flex;
 	flex-direction: column;
@@ -30,12 +30,13 @@ body {
 	justify-content: space-around;
 }
 
-.pause-over {
+.pause-screen {
 	opacity: 0;
 }
 
 .screen.shown {
 	z-index: 2;
+	opacity: 1;
 }
 
 .game.screen {
@@ -43,7 +44,7 @@ body {
 	color: #fff;
 }
 
-.start-btn {
+.btn {
 	padding: 20px;
 	background-color: hsl(207, 90%, 54%);
 	color: #fff;
@@ -51,15 +52,15 @@ body {
 	cursor: pointer;
 }
 
-.start-btn:hover {
+.btn:hover {
 	transform: scale(1.15);
 }
 
-.start-btn:active {
+.btn:active {
 	transform: scale(0.95);
 }
 
-.start-btn.err {
+.btn.err {
 	animation: err 0.25s ease-in-out 0s infinite;
 }
 
@@ -274,6 +275,11 @@ input[type="number"]::-webkit-outer-spin-button {
 	min-width: 85px;
 }
 
+.pause:active {
+	transition: 0.1s linear;
+	transform: scale(0.75);
+}
+
 .container {
 	width: 100vw;
 	height: calc(100% - 65px);
@@ -323,4 +329,24 @@ div.hide {
 	to {
 		background-color: #00000000;
 	}
+}
+
+canvas#canvas {
+	transition: filter 0.5s ease-in-out;
+}
+
+.pause-info {
+	width: 100vw;
+	height: 100vh;
+	position: absolute;
+	z-index: 0;
+}
+
+.timeIMG,
+.flagIMG {
+	position: absolute;
+}
+
+.resume.btn {
+	z-index: 1;
 }

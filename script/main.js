@@ -82,9 +82,7 @@ for (let i = 0; i < inputs.length; i++) {
 		}
 	});
 	inputs[i].addEventListener("input", (eve) => {
-		inputs[i].value < 0
-			? (inputs[i].value = Math.abs(inputs[i].value))
-			: false;
+		inputs[i].value < 0 ? (inputs[i].value = Math.abs(inputs[i].value)) : false;
 		eve.data == null ? difficultyChange(3) : false;
 		inputChange();
 	});
@@ -113,7 +111,7 @@ let strtBtn = document.getElementsByClassName("start-btn")[0];
 let screens = document.getElementsByClassName("screen");
 let writingScreen = document.querySelector(".container>div");
 
-strtBtn.addEventListener("mousedown", () => {
+strtBtn.addEventListener("click", () => {
 	if (error.classList.contains("appear")) {
 		strtBtn.classList.add("err");
 		setTimeout(() => strtBtn.classList.remove("err"), 250);
@@ -122,15 +120,34 @@ strtBtn.addEventListener("mousedown", () => {
 		setTimeout(() => screens[0].classList.remove("shown"), 250);
 		screens[1].classList.add("shown");
 		write("Now Starting!");
-		grid = new Grid(
-			levels[difficulty].dimension,
-			levels[difficulty].mines,
-			207
-		);
+		grid = new Grid(levels[difficulty].dimension, levels[difficulty].mines, 207);
 		drawFrames();
 		setTimeout(() => {
 			writingScreen.classList.add("opacity-0");
 			setTimeout(() => writingScreen.classList.add("hide"), 500);
 		}, 1400);
 	}
+});
+
+let pauseBtn = document.getElementsByClassName("pause")[0];
+
+pauseBtn.addEventListener("click", () => {
+	screens[2].classList.add("shown");
+	let timeImg = document.querySelector(".time > img");
+	let timePos = {
+		x: timeImg.x,
+		y: timeImg.y,
+	};
+	let timeResumeImg = document.querySelector(".pause-info > img.timeIMG");
+	timeResumeImg.style.left = timePos.x + "px";
+	timeResumeImg.style.top = timePos.y + "px";
+
+	let flagImg = document.querySelector(".mines > img");
+	let flagPos = {
+		x: flagImg.x,
+		y: flagImg.y,
+	};
+	let flagResumeImg = document.querySelector(".pause-info > img.flagIMG");
+	flagResumeImg.style.left = flagPos.x + "px";
+	flagResumeImg.style.top = flagPos.y + "px";
 });
